@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -16,6 +16,9 @@ COPY . .
 
 # Build the application
 RUN npm run build
+
+# Prune dev dependencies after build
+RUN npm prune --production
 
 # Production image, copy all the files and run next
 FROM base AS runner
