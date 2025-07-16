@@ -396,3 +396,55 @@ body {
     break-inside: avoid;
   }
 }
+
+/* Foldable device support */
+@media (horizontal-viewport-segments: 2) {
+  .foldable-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: env(viewport-segment-width 0 0, 0);
+  }
+  
+  .foldable-left {
+    grid-column: 1;
+  }
+  
+  .foldable-right {
+    grid-column: 2;
+  }
+  
+  /* Chat layout for vertical fold */
+  .chat-container.foldable {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .chat-messages {
+    grid-column: 1;
+  }
+  
+  .chat-input-area {
+    grid-column: 2;
+  }
+}
+
+@media (vertical-viewport-segments: 2) {
+  .foldable-container {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: env(viewport-segment-height 0 0, 0);
+  }
+  
+  .foldable-top {
+    grid-row: 1;
+  }
+  
+  .foldable-bottom {
+    grid-row: 2;
+  }
+}
+
+/* Safe area insets for foldable devices */
+.safe-area-inset {
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
+           env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}

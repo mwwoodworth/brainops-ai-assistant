@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Send, Mic, MicOff, Paperclip, X } from 'lucide-react';
 import { useOfflineSync } from '@/hooks/useOfflineSync';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,7 +16,11 @@ interface Message {
   metadata?: Record<string, unknown>;
 }
 
-export default function OfflineChat() {
+export interface OfflineChatRef {
+  addMessage: (text: string) => void;
+}
+
+const OfflineChat = forwardRef<OfflineChatRef>((props, ref) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -107,6 +111,15 @@ export default function OfflineChat() {
     }
   };
 
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    addMessage: (text: string) => {
+      setInput(text);
+      // Automatically send the message
+      setTimeout(() => handleSend(), 100);
+    }
+  }));
+
   const handleVoiceToggle = async () => {
     if (isRecording) {
       const memoId = await stopVoiceRecording();
@@ -133,9 +146,9 @@ export default function OfflineChat() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex flex-col h-[100dvh] bg-gray-900" role="application" aria-label="BrainOps AI Chat Interface">
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" role="log" aria-label="Chat messages" aria-live="polite">
         <AnimatePresence>
           {messages.map((message) => (
             <motion.div
@@ -147,10 +160,10 @@ export default function OfflineChat() {
             >
               <div
                 className={`
-                  max-w-[70%] px-4 py-2 rounded-lg
+                  px-4 py-3 rounded-lg
                   ${message.role === 'user' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-800 text-gray-200'}
+                    ? 'bg-blue-600 text-white ml-auto max-w-[min(85%,40rem)]' 
+                    : 'bg-gray-800 text-gray-200 mr-auto max-w-[min(85%,40rem)]'}
                   ${!message.synced ? 'opacity-70' : ''}
                 `}
               >
@@ -175,7 +188,8 @@ export default function OfflineChat() {
           </span>
           <button
             onClick={() => setAttachedFile(null)}
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-white p-2 min-w-[32px] min-h-[32px] flex items-center justify-center"
+            aria-label="Remove attachment"
           >
             <X className="w-4 h-4" />
           </button>
@@ -183,7 +197,7 @@ export default function OfflineChat() {
       )}
 
       {/* Input area */}
-      <div className="border-t border-gray-800 p-4">
+      <div className="border-t border-gray-800 p-4" role="form" aria-label="Message input area">
         <div className="flex items-center gap-2">
           {/* File attachment */}
           <input
@@ -194,8 +208,9 @@ export default function OfflineChat() {
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-3 text-gray-400 hover:text-white transition-colors min-w-[48px] min-h-[48px] flex items-center justify-center"
             title="Attach file"
+            aria-label="Attach file"
           >
             <Paperclip className="w-5 h-5" />
           </button>
@@ -203,12 +218,13 @@ export default function OfflineChat() {
           {/* Voice recording */}
           <button
             onClick={handleVoiceToggle}
-            className={`p-2 transition-colors ${
+            className={`p-3 transition-colors min-w-[48px] min-h-[48px] flex items-center justify-center ${
               isRecording 
                 ? 'text-red-500 hover:text-red-400' 
                 : 'text-gray-400 hover:text-white'
             }`}
             title={isRecording ? 'Stop recording' : 'Start recording'}
+            aria-label={isRecording ? 'Stop recording' : 'Start recording'}
           >
             {isRecording ? (
               <MicOff className="w-5 h-5" />
@@ -224,14 +240,16 @@ export default function OfflineChat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder={isOnline ? "Type a message..." : "Type a message (offline mode)..."}
-            className="flex-1 bg-gray-800 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 bg-gray-800 text-white px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[48px]"
+            aria-label="Message input"
           />
 
           {/* Send button */}
           <button
             onClick={handleSend}
             disabled={!input.trim() && !attachedFile}
-            className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-w-[48px] min-h-[48px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            aria-label="Send message"
           >
             <Send className="w-5 h-5" />
           </button>
@@ -246,4 +264,8 @@ export default function OfflineChat() {
       </div>
     </div>
   );
-}
+});
+
+OfflineChat.displayName = 'OfflineChat';
+
+export default OfflineChat;
