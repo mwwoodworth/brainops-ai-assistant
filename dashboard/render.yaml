@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: brainops-dashboard
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://brainops-backend.onrender.com
+      - key: NEXT_PUBLIC_WS_URL
+        value: wss://brainops-backend.onrender.com
+    healthCheckPath: /
+    autoDeploy: true

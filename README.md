@@ -13,6 +13,7 @@ A comprehensive, production-ready AI assistant system designed for automation, r
 - **QA & Review System**: Automated code review, security scanning, and compliance checks
 - **File Management**: Intelligent file operations and organization
 - **Task Management**: Real-time task tracking and process monitoring
+- **Operational Dashboard**: Comprehensive monitoring and control center for all services
 
 ### 🛠️ Technical Stack
 
@@ -30,6 +31,13 @@ A comprehensive, production-ready AI assistant system designed for automation, r
 - **Tailwind CSS**: Utility-first styling with glassmorphism theme
 - **SWR**: Data fetching and caching
 - **WebSocket**: Real-time updates
+
+#### Operational Dashboard
+- **Next.js 14**: Production-grade monitoring dashboard
+- **shadcn/ui**: Professional UI components
+- **TanStack Query**: Advanced data fetching
+- **Recharts**: Data visualization
+- **Real-time Monitoring**: Live system status
 
 #### AI Services
 - **OpenAI GPT-4**: Primary language model
@@ -198,6 +206,14 @@ Redis is used for:
 
 ## 📊 Monitoring
 
+### Operational Dashboard
+Access the comprehensive dashboard at `http://localhost:3000` (or your deployed URL) for:
+- **Real-time Health Monitoring**: Live status of all backend services
+- **Workflow Management**: View and control active workflows
+- **Activity Tracking**: Recent system events and user actions
+- **System Logs**: Real-time log streaming with filtering
+- **Manual Controls**: Trigger workflows and administrative tasks
+
 ### Health Checks
 - Service availability monitoring
 - Database connection health
@@ -228,6 +244,12 @@ pytest -v
 ### Frontend Tests
 ```bash
 cd frontend
+npm test
+```
+
+### Dashboard Tests
+```bash
+cd dashboard
 npm test
 ```
 
@@ -330,6 +352,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [API Reference](docs/api.md)
 - [User Guide](docs/user-guide.md)
 - [Developer Guide](docs/developer-guide.md)
+- [Dashboard Guide](dashboard/README.md)
+- [Dashboard Integration](DASHBOARD_INTEGRATION.md)
 - [Troubleshooting](docs/troubleshooting.md)
 
 ### Community
